@@ -6,10 +6,7 @@ namespace MovieBackend.Controllers
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+
 
         private readonly ILogger<MovieController> _logger;
 
@@ -23,9 +20,12 @@ namespace MovieBackend.Controllers
         {
             return Enumerable.Range(1, 5).Select(index => new Movie
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+               Id = 1,
+               Title = "Last Action Hero",
+               Genre = "Action",
+               Year = 
+
+
             })
             .ToArray();
         }

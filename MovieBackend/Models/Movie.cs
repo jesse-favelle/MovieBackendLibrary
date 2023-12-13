@@ -1,15 +1,18 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-/// <summary>
-/// Summary description for Class1
-/// </summary>
+
 public class Movie		
 {
+	[Required]
 	public int Id { get; set; }
 
+	[Required]
 	public string Title;
 
+	[Required]
 	public string Genre;
+	[Required]
 	public DateOnly ReleaseDate { get; set; }
 
 }
