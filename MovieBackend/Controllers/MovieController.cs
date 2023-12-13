@@ -49,7 +49,7 @@ namespace MovieBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMovie(Movie movie)
         {
-            if (_movieService.ValidateMovie(movie))
+            if (!_movieService.ValidateMovie(movie))
             {
 
             }
@@ -62,7 +62,6 @@ namespace MovieBackend.Controllers
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
-
                 _movieService.CreateMovie(movie);
 
                 return Ok(response);
@@ -73,6 +72,11 @@ namespace MovieBackend.Controllers
         [HttpPut] 
         public  IActionResult UpdateMovie(Movie movie)
         {
+            if(!_movieService.ValidateMovie(movie))
+            {
+                return BadRequest();
+            }
+            _movieService.UpdateMovie(movie);
 
             return Ok(); 
         }
@@ -80,13 +84,10 @@ namespace MovieBackend.Controllers
         [HttpDelete]
         public  IActionResult DeleteMovie(int id)
         {
+            _movieService.deleteMovie(id);
             return Ok();
         }
 
-
-
-
-
         }
     }
-}
+
