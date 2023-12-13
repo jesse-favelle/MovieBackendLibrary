@@ -2,17 +2,20 @@
 using System.ComponentModel.DataAnnotations;
 
 
+
 public class Movie		
 {
 	[Required]
 	public int Id { get; set; }
 
 	[Required]
-	public string Title;
+	public string Title { get; set; }
 
 	[Required]
-	public string Genre;
+	public string Genre { get; set; }
 	[Required]
 	public DateOnly ReleaseDate { get; set; }
+
+	public double IMDBRating {  get; set; }
 
 }
