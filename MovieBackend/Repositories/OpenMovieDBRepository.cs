@@ -13,6 +13,10 @@ namespace MovieBackend.Repositorys
         {
             using HttpClient client = new HttpClient();
             string openApiKey = _configuration["OpenMovieDBAPIKey"];
+            if(openApiKey == null)
+            {
+                throw new Exception("API Key Missing");
+            }
             string url = $"http://www.omdbapi.com/?apikey={openApiKey}&t={movieTitle}";
 
             HttpResponseMessage response = await client.GetAsync(url);

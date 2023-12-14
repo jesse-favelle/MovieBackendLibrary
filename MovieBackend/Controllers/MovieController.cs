@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+﻿using Microsoft.AspNetCore.Mvc;
 using MovieBackend.Repositorys;
 using MovieBackend.Services;
 using Newtonsoft.Json.Linq;
@@ -26,7 +24,6 @@ namespace MovieBackend.Controllers
         [HttpGet(Name = "GetMovies")]
         public IActionResult GetMovies()
         {
-
             return Ok(_movieRepository.GetMovies());
         }
 
@@ -45,9 +42,10 @@ namespace MovieBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMovie(Movie movie)
         {        
-            string openMovieJsonStringResponse = await _openMovieDbRepository.SearchByMovieTitle(movie.Title);
+            string openMovieAPIJsonStringResponse = await _openMovieDbRepository.SearchByMovieTitle(movie.Title);
            
-            var openMovieJsonObject =  JObject.Parse(openMovieJsonStringResponse);
+            var openMovieJsonObject =  JObject.Parse(openMovieAPIJsonStringResponse);
+            
             movie.IMDBRating = Convert.ToDouble(openMovieJsonObject["imdbRating"]);
 
             _movieService.CreateMovie(movie);
@@ -58,7 +56,6 @@ namespace MovieBackend.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateMovie(Movie movie)
         {
-
             if (_movieRepository.GetMovie(movie.Id) == null)
             {
                 return NotFound();
@@ -78,6 +75,5 @@ namespace MovieBackend.Controllers
             _movieService.deleteMovie(id);
             return Ok();
         }
-
     }
 }
