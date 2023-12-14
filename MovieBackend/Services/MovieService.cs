@@ -1,6 +1,4 @@
-﻿using MovieBackend.Repositorys;
-
-namespace MovieBackend.Services
+﻿namespace MovieBackend.Services
 {
     public class MovieService : IMovieService
     {

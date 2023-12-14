@@ -1,5 +1,4 @@
 ﻿using MovieBackend.Repositorys;
-using MovieBackend.Services;
 using Newtonsoft.Json.Linq;
 
 public class MovieRepository : IMovieRepository
