@@ -1,6 +1,4 @@
-﻿using System;
-
-public class MovieRepository : IMovieRepository
+﻿public class MovieRepository : IMovieRepository
 {
 	public MovieRepository()
 	{
@@ -8,16 +6,14 @@ public class MovieRepository : IMovieRepository
 	public List<Movie> GetMovies()
 	{
 		/*call the db, get all movies;
-		 * try
+		 * trycatch
 		 */
 
 		return movies;
-	
-		
 	}
 	public Movie GetMovie(int id)
 	{
-		var movie =  movies.Find(x => x.Id == id);
+		var movie = movies.Find(x => x.Id == id);
 		
 		return movie;
 	}
@@ -39,10 +35,9 @@ public class MovieRepository : IMovieRepository
         var movieToUpdate = movies.Find(x => x.Id == movie.Id);
 
         UpdateMovie(movie, movieToUpdate);
-
     }
 
-    private static void UpdateMovie(Movie movie, Movie? movieToUpdate)
+    private static void UpdateMovie(Movie movie, Movie movieToUpdate)
     {
         movieToUpdate.Title = movie.Title;
         movieToUpdate.ReleaseDate = movie.ReleaseDate;
@@ -53,7 +48,7 @@ public class MovieRepository : IMovieRepository
 		movies.Remove(GetMovie(id));
 	}
 
-List<Movie> movies = new List<Movie> {
+	List<Movie> movies = new List<Movie> {
             new Movie
             {
                 Id = 1,

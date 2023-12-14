@@ -7,7 +7,7 @@ public class Movie
 	[Required]
 	public string? Title { get; set; }
 
-	[Required ]
+	[Required]
 	public string? Genre { get; set; }
 	[Required]
 	public DateOnly ReleaseDate { get; set; }
