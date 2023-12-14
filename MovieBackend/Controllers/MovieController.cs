@@ -48,21 +48,21 @@ namespace MovieBackend.Controllers
             
             movie.IMDBRating = Convert.ToDouble(openMovieJsonObject["imdbRating"]);
 
-            _movieService.CreateMovie(movie);
+            List<Movie> movies = _movieService.CreateMovie(movie);
 
-            return Created();
+            return Created("", movies);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public IActionResult UpdateMovie(Movie movie)
         {
             if (_movieRepository.GetMovie(movie.Id) == null)
             {
                 return NotFound();
             }
-            _movieService.UpdateMovie(movie);
+            List<Movie> movies = _movieService.UpdateMovie(movie);
 
-            return Ok();
+            return Ok(movies);
         }
 
         [HttpDelete("{id}")]
@@ -72,8 +72,8 @@ namespace MovieBackend.Controllers
             {
                 return NotFound();
             }
-            _movieService.deleteMovie(id);
-            return Ok();
+            List<Movie> movies =_movieService.deleteMovie(id);
+            return Ok(movies);
         }
     }
 }

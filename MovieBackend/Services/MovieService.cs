@@ -6,56 +6,58 @@ namespace MovieBackend.Services
     {
         IMovieRepository _repository;
 
-        public MovieService(IConfiguration configuration)
+        public MovieService(IMovieRepository movieRepository)
         {
-            _repository = new MovieRepository();
+            _repository = movieRepository;
         }
 
-        public bool CreateMovie(Movie movie)
+        public List<Movie> CreateMovie(Movie movie)
         {
+            List<Movie> movies;
             try
             {
-                _repository.AddMovie(movie);
+               movies = _repository.AddMovie(movie);
             }
             catch
             {
-                return false;
+                throw new Exception("Couldn't Add Movie");
             }
-            return true;
+            return movies;
         }
 
-        public bool UpdateMovie(Movie updatedMovie)
+        public List<Movie> UpdateMovie(Movie updatedMovie)
         {
-
+            List<Movie> movies;
             try
             {
-                _repository.UpdateMovie(updatedMovie);
+              movies =  _repository.UpdateMovie(updatedMovie);
             }
             catch
             {
-                return false;
+                throw new Exception("Couldn't update Movie");
             }
-            return true;
+            return movies;
         }
 
-        public bool deleteMovie(int id)
+        public List<Movie> deleteMovie(int id)
         {
+            List<Movie> movies;
             try
             {
-                _repository.DeleteMovie(id);
+               movies = _repository.DeleteMovie(id);
             }
             catch
             {
-                return false;
+                throw new Exception("Couldn't Delete Movie");
             }
-            return true;
+            return movies;
         }
     }
 
     public interface IMovieService
     {
-        bool CreateMovie(Movie movie);
-        bool UpdateMovie(Movie updatedMovie);
-        bool deleteMovie(int id);
+        List<Movie> CreateMovie(Movie movie);
+        List<Movie> UpdateMovie(Movie updatedMovie);
+        List<Movie> deleteMovie(int id);
     }
 }
