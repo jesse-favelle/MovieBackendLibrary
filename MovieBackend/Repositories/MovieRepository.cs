@@ -54,9 +54,7 @@ public class MovieRepository : IMovieRepository
         movieToUpdate.Genre = movie.Genre;
 
         string openMovieAPIJsonStringResponse = await _openMovieDBRepository.SearchByMovieTitle(movie.Title);
-
-        var openMovieJsonObject = JObject.Parse(openMovieAPIJsonStringResponse);
-
+        var openMovieJsonObject = JObject.Parse(openMovieAPIJsonStringResponse); 
         movieToUpdate.IMDBRating = Convert.ToDouble(openMovieJsonObject["imdbRating"]);
     }
 
