@@ -1,15 +1,12 @@
-﻿using System;
-
-/// <summary>
-/// Summary description for Class1
-/// </summary>
-public class Movie		
+﻿public class Movie		
 {
 	public int Id { get; set; }
 
-	public string Title;
+	public string? Title { get; set; }
 
-	public string Genre;
+	public string? Genre { get; set; }
 	public DateOnly ReleaseDate { get; set; }
+
+	public double IMDBRating {  get; set; }
 
 }
