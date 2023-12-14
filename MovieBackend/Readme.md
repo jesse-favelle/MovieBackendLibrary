@@ -1,18 +1,16 @@
 Getting Started
-This is an example of how you may give instructions on setting up your project locally. To get a local copy up and running follow these simple example steps.
+Building and Running will run an instance on your localhost and open up a swagger page for testing. 
 
-npm
-npm install npm@latest -g
-Installation
-
+Create a Secret
 Get a free API Key at https://www.omdbapi.com/apikey.aspx
 Clone the repo
-Enter your API Key in appsetting.json
-openMovieDBAPIKey = 'ENTER YOUR API';
+Create a secret called "OpenMovieDBAPIKey" using your api key
+dotnet user-secrets set "OpenMovieDBAPIKey" "12345"
+https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-8.0&tabs=windows
+
 (back to top)
 
 Usage
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
 For more examples, please refer to the Documentation
 
@@ -21,7 +19,7 @@ For more examples, please refer to the Documentation
 Contact
 Jesse Favelle - jesse.favelle@outlook.com
 
-Project Link: https://github.com/your_username/repo_name
+Project Link: https://github.com/jesse-favelle/MovieBackendLibrary
 
 (back to top)
 

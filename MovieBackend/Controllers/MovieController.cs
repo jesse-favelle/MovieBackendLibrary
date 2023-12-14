@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
-using MovieBackend.Models;
 using MovieBackend.Repositorys;
-using Newtonsoft.Json;
+using MovieBackend.Services;
 using Newtonsoft.Json.Linq;
-using NuGet.Protocol;
 
 namespace MovieBackend.Controllers
 {
@@ -12,41 +11,40 @@ namespace MovieBackend.Controllers
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
-        private readonly ILogger<MovieController> _logger;
-        private IMovieService _movieService;
         private IMovieRepository _movieRepository;
-        private IOpenMovieDbRepository _openMovieDbRepository;
+        private IMovieService _movieService;
+        private IOpenMovieDbRepository   _openMovieDbRepository;
 
-        public MovieController(ILogger<MovieController> logger, IConfiguration configuration)
+        public MovieController(IMovieService movieService, IMovieRepository movieRepository, IOpenMovieDbRepository openMovieDbRepository)
         {
-            _logger = logger;
-            _movieService = new MovieService(configuration);
-            _movieRepository = new MovieRepository();
-            _openMovieDbRepository = new OpenMovieDBRepository(configuration);
+            _movieRepository = movieRepository;
+            _openMovieDbRepository = openMovieDbRepository;
+            _movieService = movieService;
 
         }
 
         [HttpGet(Name = "GetMovies")]
-        public IEnumerable<Movie> GetMovies()
+        public IActionResult GetMovies()
         {
 
-            return _movieRepository.GetMovies();
+            return Ok(_movieRepository.GetMovies());
         }
 
         [HttpGet("{id}", Name = "GetMovie")]
-        public Movie GetMovie(int id)
+        public IActionResult GetMovie(int id)
         {
-           return _movieRepository.GetMovie(id);
+            if(id == 0)  
+            {
+                return BadRequest("Must be a valid id");
+            }
+            Movie foundMovie = _movieRepository.GetMovie(id);
+
+           return foundMovie == null ? NotFound() : Ok(foundMovie);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddMovie(Movie movie)
-        {
-            if (!_movieService.ValidateMovie(movie))
-            {
-
-            }
-
+        {        
             string openMovieJsonStringResponse = await _openMovieDbRepository.SearchByMovieTitle(movie.Title);
            
             var openMovieJsonObject =  JObject.Parse(openMovieJsonStringResponse);
@@ -54,15 +52,16 @@ namespace MovieBackend.Controllers
 
             _movieService.CreateMovie(movie);
 
-            return Ok();
+            return Created();
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateMovie(Movie movie)
         {
-            if (!_movieService.ValidateMovie(movie))
+
+            if (_movieRepository.GetMovie(movie.Id) == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             _movieService.UpdateMovie(movie);
 
@@ -72,6 +71,10 @@ namespace MovieBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteMovie(int id)
         {
+            if(_movieRepository.GetMovie(id) == null)
+            {
+                return NotFound();
+            }
             _movieService.deleteMovie(id);
             return Ok();
         }
