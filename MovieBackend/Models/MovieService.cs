@@ -1,19 +1,24 @@
-﻿using MovieBackend.Controllers;
+﻿
+using MovieBackend.Repositorys;
 
 namespace MovieBackend.Models
 {
     public class MovieService : IMovieService
     {
-        MovieRepository _repository;
+        IMovieRepository _repository;
+        IOpenMovieDbRepository _openMovieDbRepository;
+        IConfiguration _configuration;
 
-        public MovieService()
+
+        public MovieService(IConfiguration configuration)
         {
             _repository = new MovieRepository();
+            _openMovieDbRepository = new OpenMovieDBRepository(configuration);
         }
 
         public bool ValidateMovie(Movie movie)
         {
-            if(movie.Title == null || movie.Title.Length < 100)
+            if(movie.Title == null || movie.Title.Length > 100)
             {
                 throw new ArgumentException("Movie Title is not valid");
             }
@@ -27,7 +32,6 @@ namespace MovieBackend.Models
 
         public bool CreateMovie(Movie movie)
         {
-
             try
             {
                 _repository.AddMovie(movie);
@@ -44,10 +48,10 @@ namespace MovieBackend.Models
             try
             {
 
-                if(!_repository.GetMovie(updatedMovie.Id))
+                /*if(!_repository.GetMovie(updatedMovie.Id))
                 {
                     throw new Exception();
-                }
+                }*/
 
                 _repository.UpdateMovie(updatedMovie);
             }

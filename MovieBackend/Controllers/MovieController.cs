@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MovieBackend.Models;
-using System.Security.Cryptography.X509Certificates;
-
+using MovieBackend.Repositorys;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
 
 namespace MovieBackend.Controllers
 {
@@ -9,41 +12,31 @@ namespace MovieBackend.Controllers
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
-        private IMovieService _movieService;
-
         private readonly ILogger<MovieController> _logger;
+        private IMovieService _movieService;
+        private IMovieRepository _movieRepository;
+        private IOpenMovieDbRepository _openMovieDbRepository;
 
-        public MovieController(ILogger<MovieController> logger)
+        public MovieController(ILogger<MovieController> logger, IConfiguration configuration)
         {
             _logger = logger;
-            _movieService = new MovieService();
+            _movieService = new MovieService(configuration);
+            _movieRepository = new MovieRepository();
+            _openMovieDbRepository = new OpenMovieDBRepository(configuration);
+
         }
 
         [HttpGet(Name = "GetMovies")]
         public IEnumerable<Movie> GetMovies()
         {
 
-            return Enumerable.Range(1, 5).Select(index => new Movie
-            {
-                Id = 1,
-                Title = "Last Action Hero",
-                Genre = "Action",
-                ReleaseDate = new DateOnly(1993, 3, 3),
-
-            })
-            .ToArray();
+            return _movieRepository.GetMovies();
         }
 
         [HttpGet("{id}", Name = "GetMovie")]
         public Movie GetMovie(int id)
         {
-            return new Movie
-            {
-                Id = 1,
-                Title = "Last Action Hero",
-                Genre = "Action",
-                ReleaseDate = new DateOnly(1993, 3, 3),
-            };
+           return _movieRepository.GetMovie(id);
         }
 
         [HttpPost]
@@ -53,41 +46,35 @@ namespace MovieBackend.Controllers
             {
 
             }
-            using (var client = new HttpClient())
-            {
 
-                string openApiKey = Environment.GetEnvironmentVariable("OpenMovieDBAPIKey");
-                string url = "http://www.omdbapi.com/?apikey={openApiKey}&t={title}";
+            string openMovieJsonStringResponse = await _openMovieDbRepository.SearchByMovieTitle(movie.Title);
+           
+            var openMovieJsonObject =  JObject.Parse(openMovieJsonStringResponse);
+            movie.IMDBRating = Convert.ToDouble(openMovieJsonObject["imdbRating"]);
 
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
+            _movieService.CreateMovie(movie);
 
-                _movieService.CreateMovie(movie);
-
-                return Ok(response);
-
-            }
+            return Ok();
         }
 
-        [HttpPut] 
-        public  IActionResult UpdateMovie(Movie movie)
+        [HttpPut("{id}")]
+        public IActionResult UpdateMovie(Movie movie)
         {
-            if(!_movieService.ValidateMovie(movie))
+            if (!_movieService.ValidateMovie(movie))
             {
                 return BadRequest();
             }
             _movieService.UpdateMovie(movie);
 
-            return Ok(); 
+            return Ok();
         }
 
-        [HttpDelete]
-        public  IActionResult DeleteMovie(int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteMovie(int id)
         {
             _movieService.deleteMovie(id);
             return Ok();
         }
 
-        }
     }
-
+}
