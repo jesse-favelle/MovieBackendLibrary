@@ -1,7 +1,13 @@
-﻿public class MovieRepository : IMovieRepository
+﻿using MovieBackend.Repositorys;
+using MovieBackend.Services;
+using Newtonsoft.Json.Linq;
+
+public class MovieRepository : IMovieRepository
 {
-	public MovieRepository()
+	private IOpenMovieDbRepository _openMovieDBRepository;
+	public MovieRepository(IOpenMovieDbRepository openMovieDBRepository)
 	{
+		_openMovieDBRepository = openMovieDBRepository;
 	}
 	public List<Movie> GetMovies()
 	{
@@ -18,7 +24,7 @@
 		return movie;
 	}
 
-	public void AddMovie(Movie movie)
+	public List<Movie> AddMovie(Movie movie)
 	{
 		try
 		{
@@ -28,24 +34,35 @@
 		{
 			throw new Exception("Couldn't Add Movie");
 		}
+
+		return movies;
 	}
 
-	public void UpdateMovie(Movie movie)
+	public List<Movie> UpdateMovie(Movie movie)
     {
         var movieToUpdate = movies.Find(x => x.Id == movie.Id);
 
         UpdateMovie(movie, movieToUpdate);
+
+		return movies;
     }
 
-    private static void UpdateMovie(Movie movie, Movie movieToUpdate)
+    private async void UpdateMovie(Movie movie, Movie movieToUpdate)
     {
         movieToUpdate.Title = movie.Title;
         movieToUpdate.ReleaseDate = movie.ReleaseDate;
         movieToUpdate.Genre = movie.Genre;
+
+        string openMovieAPIJsonStringResponse = await _openMovieDBRepository.SearchByMovieTitle(movie.Title);
+
+        var openMovieJsonObject = JObject.Parse(openMovieAPIJsonStringResponse);
+
+        movieToUpdate.IMDBRating = Convert.ToDouble(openMovieJsonObject["imdbRating"]);
     }
 
-    public void DeleteMovie(int id) { 
+    public List<Movie> DeleteMovie(int id) { 
 		movies.Remove(GetMovie(id));
+		return movies;
 	}
 
 	List<Movie> movies = new List<Movie> {
@@ -80,7 +97,7 @@ public interface IMovieRepository
 {
 	List<Movie> GetMovies();
 	Movie GetMovie(int id);
-	void AddMovie(Movie movie);
-	void UpdateMovie(Movie movie);
-	void DeleteMovie(int id);
+	List<Movie> AddMovie(Movie movie);
+	List<Movie> UpdateMovie(Movie movie);
+	List<Movie> DeleteMovie(int id);
 }
