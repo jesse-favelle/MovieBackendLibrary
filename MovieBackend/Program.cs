@@ -1,17 +1,23 @@
+using MovieBackend.Repositorys;
+using MovieBackend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+var onlineMovieApiKey = builder.Configuration["OpenMovieDBAPIKey"];
 
 // Add services to the container.
-
+builder.Services.AddSingleton<IMovieService, MovieService>();
+builder.Services.AddSingleton<IMovieRepository, MovieRepository>();
+builder.Services.AddSingleton<IOpenMovieDbRepository, OpenMovieDBRepository>();
 builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-    var app = builder.Build();
+var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -19,6 +25,7 @@ builder.Services.AddControllers();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.MapGet("/", () => onlineMovieApiKey);
 
 app.MapControllers();
 
